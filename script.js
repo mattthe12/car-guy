@@ -1,216 +1,126 @@
-// Welcome message
-function welcomeMessage() {
-    alert("Welcome to Car Guy's Website!");
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1 onclick="welcomeMessage()">Car Guy</h1>
+        <button id="theme-toggle">Toggle Dark Mode</button>
+        <button id="login-btn">Login</button>
+        <button id="signup-btn">Sign Up</button>
+        <button id="logout-btn" style="display: none;">Logout</button> <!-- Logout Button -->
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="home">
+            <h2>Home Section</h2>
+            <p id="home-text">This is the homepage of my first website.</p>
+            <img id="home-image" src="placeholder.jpg" alt="Home Image" style="width: 100%; max-width: 300px;">
+        </section>
+        <section id="about">
+            <h2>About Me</h2>
+            <p id="about-text">Learn more about me here.</p>
+        </section>
+        <section id="contact">
+            <h2>Contact</h2>
+            <p id="contact-text">Get in touch with me.</p>
+        </section>
+        <section id="admin-panel" style="display: none;">
+            <h2>Admin Panel</h2>
+            <p>Welcome, Admin! Here you can manage the website and users.</p>
 
-// Dark mode toggle
-const themeToggle = document.getElementById('theme-toggle');
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-});
+            <!-- User Management -->
+            <div id="user-management">
+                <h3>User Management</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list">
+                        <!-- Dynamically filled with user data -->
+                    </tbody>
+                </table>
+            </div>
 
-// Smooth scrolling
-document.querySelectorAll('nav ul li a').forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        target.scrollIntoView({ behavior: 'smooth' });
-    });
-});
+            <!-- Website Editing -->
+            <div id="website-editing">
+                <h3>Website Editing</h3>
+                <form id="edit-home">
+                    <h4>Home Section</h4>
+                    <label for="home-text-input">Edit Text:</label>
+                    <input type="text" id="home-text-input" value="This is the homepage of my first website.">
+                    <label for="home-image-input">Edit Image URL:</label>
+                    <input type="text" id="home-image-input" value="placeholder.jpg">
+                    <button type="button" onclick="updateHome()">Update Home</button>
+                </form>
+                <form id="edit-about">
+                    <h4>About Section</h4>
+                    <label for="about-text-input">Edit Text:</label>
+                    <input type="text" id="about-text-input" value="Learn more about me here.">
+                    <button type="button" onclick="updateAbout()">Update About</button>
+                </form>
+                <form id="edit-contact">
+                    <h4>Contact Section</h4>
+                    <label for="contact-text-input">Edit Text:</label>
+                    <input type="text" id="contact-text-input" value="Get in touch with me.">
+                    <button type="button" onclick="updateContact()">Update Contact</button>
+                </form>
+            </div>
 
-// Auto-update year
-document.getElementById('year').textContent = new Date().getFullYear();
+            <!-- Admin Actions -->
+            <div id="admin-actions">
+                <h3>Admin Actions</h3>
+                <button id="reset-users">Reset All Users</button>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© <span id="year"></span> My First Website</p>
+    </footer>
 
-// Dummy user data storage
-const users = {};
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="login-username">Username:</label>
+                <input type="text" id="login-username" name="login-username" required>
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="login-password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
 
-// Admin credentials
-const adminUsername = "matt";
-const adminPassword = "candle1997";
+    <!-- Sign-Up Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <label for="signup-username">Username:</label>
+                <input type="text" id="signup-username" name="signup-username" required>
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" name="signup-password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
 
-// Modals and forms
-const loginBtn = document.getElementById('login-btn');
-const signupBtn = document.getElementById('signup-btn');
-const loginModal = document.getElementById('login-modal');
-const signupModal = document.getElementById('signup-modal');
-const adminPanel = document.getElementById('admin-panel');
-const closeButtons = document.querySelectorAll('.close');
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-
-// Admin Panel Elements
-const userList = document.getElementById('user-list');
-const resetUsersButton = document.getElementById('reset-users');
-const logoutBtn = document.getElementById('logout-btn');
-
-// Website Editing Inputs (admin form inputs)
-const homeTextInput = document.getElementById('home-text-input');
-const homeImageInput = document.getElementById('home-image-input');
-const aboutTextInput = document.getElementById('about-text-input');
-const contactTextInput = document.getElementById('contact-text-input');
-const homeText = document.getElementById('home-text');
-const homeImage = document.getElementById('home-image');
-const aboutText = document.getElementById('about-text');
-const contactText = document.getElementById('contact-text');
-
-// Modal event listeners
-loginBtn.addEventListener('click', () => loginModal.style.display = 'block');
-signupBtn.addEventListener('click', () => signupModal.style.display = 'block');
-closeButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        loginModal.style.display = 'none';
-        signupModal.style.display = 'none';
-    });
-});
-
-// Login functionality
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const username = loginForm['login-username'].value;
-    const password = loginForm['login-password'].value;
-    if (username === adminUsername && password === adminPassword) {
-        alert("Welcome, Admin!");
-        loginModal.style.display = 'none';
-        adminPanel.style.display = 'block';
-        loginBtn.style.display = 'none';
-        signupBtn.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-        localStorage.setItem('isLoggedIn', 'true');  // Save login status
-        loadAdminPanelData(); // Load the saved data from localStorage
-    } else {
-        alert("Invalid credentials. Please try again.");
-    }
-});
-
-// Sign up functionality
-signupForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const username = signupForm['signup-username'].value;
-    const password = signupForm['signup-password'].value;
-    if (!users[username]) {
-        users[username] = { password };
-        alert("Sign up successful.");
-        signupModal.style.display = 'none';
-    } else {
-        alert("Username already exists.");
-    }
-});
-
-// Logout functionality
-logoutBtn.addEventListener('click', () => {
-    alert("You have been logged out.");
-    adminPanel.style.display = 'none';
-    loginBtn.style.display = 'inline-block';
-    signupBtn.style.display = 'inline-block';
-    logoutBtn.style.display = 'none';
-    localStorage.removeItem('isLoggedIn');  // Remove login status
-});
-
-// Update website content and save to localStorage
-function updateHome() {
-    const homeTextValue = homeTextInput.value;
-    const homeImageValue = homeImageInput.value;
-
-    // Update the page content
-    homeText.textContent = homeTextValue;
-    homeImage.src = homeImageValue;
-
-    // Save the updated content to localStorage
-    localStorage.setItem('homeText', homeTextValue);
-    localStorage.setItem('homeImage', homeImageValue);
-}
-
-function updateAbout() {
-    const aboutTextValue = aboutTextInput.value;
-
-    // Update the page content
-    aboutText.textContent = aboutTextValue;
-
-    // Save the updated content to localStorage
-    localStorage.setItem('aboutText', aboutTextValue);
-}
-
-function updateContact() {
-    const contactTextValue = contactTextInput.value;
-
-    // Update the page content
-    contactText.textContent = contactTextValue;
-
-    // Save the updated content to localStorage
-    localStorage.setItem('contactText', contactTextValue);
-}
-
-// Load saved content from localStorage on page load
-function loadSavedContent() {
-    // Load content from localStorage, if available
-    const savedHomeText = localStorage.getItem('homeText');
-    const savedHomeImage = localStorage.getItem('homeImage');
-    const savedAboutText = localStorage.getItem('aboutText');
-    const savedContactText = localStorage.getItem('contactText');
-
-    // Apply saved content to the page
-    if (savedHomeText) {
-        homeText.textContent = savedHomeText;
-        homeTextInput.value = savedHomeText;
-    }
-    if (savedHomeImage) {
-        homeImage.src = savedHomeImage;
-        homeImageInput.value = savedHomeImage;
-    }
-    if (savedAboutText) {
-        aboutText.textContent = savedAboutText;
-        aboutTextInput.value = savedAboutText;
-    }
-    if (savedContactText) {
-        contactText.textContent = savedContactText;
-        contactTextInput.value = savedContactText;
-    }
-}
-
-// Call the function when the page loads
-window.onload = loadSavedContent;
-
-// Reset all users
-resetUsersButton.addEventListener('click', () => {
-    if (confirm("Are you sure you want to reset all users?")) {
-        users = {};  // Reset user data
-        alert("All users have been reset.");
-        loadAdminPanelData();  // Re-load admin panel
-    }
-});
-
-// Load admin panel data from localStorage
-function loadAdminPanelData() {
-    const savedUsers = localStorage.getItem('users');
-    if (savedUsers) {
-        users = JSON.parse(savedUsers);
-        updateUserList();
-    }
-}
-
-// Update user list in the admin panel
-function updateUserList() {
-    userList.innerHTML = '';
-    Object.keys(users).forEach(username => {
-        const row = document.createElement('tr');
-        const usernameCell = document.createElement('td');
-        const actionsCell = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => deleteUser(username));
-        usernameCell.textContent = username;
-        actionsCell.appendChild(deleteButton);
-        row.appendChild(usernameCell);
-        row.appendChild(actionsCell);
-        userList.appendChild(row);
-    });
-}
-
-// Delete user
-function deleteUser(username) {
-    if (confirm(`Are you sure you want to delete the user: ${username}?`)) {
-        delete users[username];
-        localStorage.setItem('users', JSON.stringify(users));  // Save updated user list
-        updateUserList();
-    }
-}
+    <script src="script.js"></script>
+</body>
+</html>
