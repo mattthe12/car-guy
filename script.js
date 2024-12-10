@@ -103,81 +103,114 @@ logoutBtn.addEventListener('click', () => {
     loginBtn.style.display = 'inline-block';
     signupBtn.style.display = 'inline-block';
     logoutBtn.style.display = 'none';
-    localStorage.removeItem('isLoggedIn'); // Clear login status on logout
-    // Don't clear the homepage content, as it is saved in localStorage
+    localStorage.removeItem('isLoggedIn');  // Remove login status
 });
 
-// Update sections for admin
+// Update website content and save to localStorage
 function updateHome() {
-    homeText.textContent = homeTextInput.value;
-    homeImage.src = homeImageInput.value;
-    // Save to localStorage
-    localStorage.setItem('homeText', homeTextInput.value);
-    localStorage.setItem('homeImage', homeImageInput.value);
+    const homeTextValue = homeTextInput.value;
+    const homeImageValue = homeImageInput.value;
+
+    // Update the page content
+    homeText.textContent = homeTextValue;
+    homeImage.src = homeImageValue;
+
+    // Save the updated content to localStorage
+    localStorage.setItem('homeText', homeTextValue);
+    localStorage.setItem('homeImage', homeImageValue);
 }
 
 function updateAbout() {
-    aboutText.textContent = aboutTextInput.value;
-    // Save to localStorage
-    localStorage.setItem('aboutText', aboutTextInput.value);
+    const aboutTextValue = aboutTextInput.value;
+
+    // Update the page content
+    aboutText.textContent = aboutTextValue;
+
+    // Save the updated content to localStorage
+    localStorage.setItem('aboutText', aboutTextValue);
 }
 
 function updateContact() {
-    contactText.textContent = contactTextInput.value;
-    // Save to localStorage
-    localStorage.setItem('contactText', contactTextInput.value);
+    const contactTextValue = contactTextInput.value;
+
+    // Update the page content
+    contactText.textContent = contactTextValue;
+
+    // Save the updated content to localStorage
+    localStorage.setItem('contactText', contactTextValue);
 }
 
-// Delete user from the list
-function deleteUser(username) {
-    delete users[username];
-    updateUserList();
+// Load saved content from localStorage on page load
+function loadSavedContent() {
+    // Load content from localStorage, if available
+    const savedHomeText = localStorage.getItem('homeText');
+    const savedHomeImage = localStorage.getItem('homeImage');
+    const savedAboutText = localStorage.getItem('aboutText');
+    const savedContactText = localStorage.getItem('contactText');
+
+    // Apply saved content to the page
+    if (savedHomeText) {
+        homeText.textContent = savedHomeText;
+        homeTextInput.value = savedHomeText;
+    }
+    if (savedHomeImage) {
+        homeImage.src = savedHomeImage;
+        homeImageInput.value = savedHomeImage;
+    }
+    if (savedAboutText) {
+        aboutText.textContent = savedAboutText;
+        aboutTextInput.value = savedAboutText;
+    }
+    if (savedContactText) {
+        contactText.textContent = savedContactText;
+        contactTextInput.value = savedContactText;
+    }
 }
+
+// Call the function when the page loads
+window.onload = loadSavedContent;
 
 // Reset all users
 resetUsersButton.addEventListener('click', () => {
     if (confirm("Are you sure you want to reset all users?")) {
-        for (let username in users) {
-            delete users[username];
-        }
-        updateUserList();
+        users = {};  // Reset user data
         alert("All users have been reset.");
+        loadAdminPanelData();  // Re-load admin panel
     }
 });
 
-// Load saved data from localStorage
+// Load admin panel data from localStorage
 function loadAdminPanelData() {
-    // Load home section data
-    if (localStorage.getItem('homeText')) {
-        homeText.textContent = localStorage.getItem('homeText');
-        homeImage.src = localStorage.getItem('homeImage');
-        homeTextInput.value = localStorage.getItem('homeText');
-        homeImageInput.value = localStorage.getItem('homeImage');
-    }
-
-    // Load about section data
-    if (localStorage.getItem('aboutText')) {
-        aboutText.textContent = localStorage.getItem('aboutText');
-        aboutTextInput.value = localStorage.getItem('aboutText');
-    }
-
-    // Load contact section data
-    if (localStorage.getItem('contactText')) {
-        contactText.textContent = localStorage.getItem('contactText');
-        contactTextInput.value = localStorage.getItem('contactText');
+    const savedUsers = localStorage.getItem('users');
+    if (savedUsers) {
+        users = JSON.parse(savedUsers);
+        updateUserList();
     }
 }
 
-// Check login status on page load
-window.addEventListener('load', () => {
-    // Display homepage data saved in localStorage
-    loadAdminPanelData();
-    
-    // Check if user is logged in
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        adminPanel.style.display = 'block';
-        loginBtn.style.display = 'none';
-        signupBtn.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
+// Update user list in the admin panel
+function updateUserList() {
+    userList.innerHTML = '';
+    Object.keys(users).forEach(username => {
+        const row = document.createElement('tr');
+        const usernameCell = document.createElement('td');
+        const actionsCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => deleteUser(username));
+        usernameCell.textContent = username;
+        actionsCell.appendChild(deleteButton);
+        row.appendChild(usernameCell);
+        row.appendChild(actionsCell);
+        userList.appendChild(row);
+    });
+}
+
+// Delete user
+function deleteUser(username) {
+    if (confirm(`Are you sure you want to delete the user: ${username}?`)) {
+        delete users[username];
+        localStorage.setItem('users', JSON.stringify(users));  // Save updated user list
+        updateUserList();
     }
-});
+}
